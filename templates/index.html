@@ -1,0 +1,220 @@
+<html>
+    <head>
+        <title>Termékleírás DEMO</title>
+    </head>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand&family=Syne:wght@400..800&display=swap" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+            padding: 50px;
+        }
+
+
+        table {
+            width: 70%;
+        }
+        table input {
+            width: 250px
+        }
+
+        #d_paramteres {
+            background-color: rgb(233, 233, 233);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            display: felx;
+
+            padding: 20px;
+            box-shadow: 5px 10px 8px rgb(121, 121, 121);
+        }
+        #d_output {
+            background-color: rgb(118, 197, 200);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            display: felx;
+
+            padding: 20px;
+
+            box-shadow: 5px 10px 8px rgb(121, 121, 121);
+        }
+
+        #output {
+            margin-top: 10px;
+            width: 100%;
+            height: 200px;
+            line-height: 200px;
+            resize: none;
+            padding: 10px;
+            line-height: 1.5; /* Set line height */
+            text-align: left;
+        }
+    </style>
+
+    <style>
+        .slider {
+            -webkit-appearance: none;  /* Override default CSS styles */
+            appearance: none;
+            width: 250px; /* Full-width */
+            height: 20px; /* Specified height */
+            background: #c7c7c7; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+
+        }
+
+        input[type='range']::-webkit-slider-thumb {
+            width: 10px;
+            -webkit-appearance: none;
+            height: 20px;
+            cursor: pointer;
+            background: rgb(89, 148, 150);
+        
+        }
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+
+
+    </style>
+
+    <body>
+        <div id="d_paramteres">
+            <h1>Paramters</h1>
+
+            <table>
+                <tr>
+                    <td>
+                        <label for="i_item">Item name</label> 
+                    </td>
+                    <td>
+                        <input type="text" id="i_item" value="toothbrush"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="i_material">Material</label>
+                    </td>
+                    <td>
+                        <input type="text" id="i_material"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="i_attr1">Attribute 1</label>
+                    </td>
+                    <td>
+                       <input type="text" id="i_attr1" value="deep clean"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="i_attr2">Attribute 2</label>
+                    </td>
+                    <td>
+                        <input type="text" id="i_attr2" value="long-lasting"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="s_length">Length</label>
+                    </td>
+                    <td>
+                        <select name="Length" id="s_length">
+                            <option value="short">Short</option>
+                            <option value="medium">Medium</option>        
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="s_language">Language</label>
+                    </td>
+                    <td>
+                        <select name="language" id="s_language">
+                            <option value="eng">English</option>
+                            <option value="hun">Hungarian</option>        
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="i_temp">Temperature</label>
+                    </td>
+                    <td>
+                        <input type="range" min="0" max="200" value="70" class="slider" id="i_temp">
+                    </td>
+                </tr>
+                <!--
+                <tr>
+                    
+                    <td>
+                        <label for="i_tokens">Max Tokens</label>
+                    </td>
+                    <td>
+                        <input type="number" id="i_tokens">
+                    </td>
+                </tr>
+                -->
+                <tr>
+                    <td>
+                        <label for="s_model">Model</label>
+                    </td>
+                    <td>
+                        <select name="language" id="s_model">
+                            <option value="gpt-3.5-turbo-0125">gpt-3.5-turbo-0125</option>
+                            <option value="gpt-4-0125-preview">gpt-4-0125-preview</option>        
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                     <button id="submit" type="submit">Generate</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div id="d_output" widht="100%">
+            <label for="output">Generated Description</label>
+            <br>
+            <textarea id="output"></textarea>
+        </div>
+
+        <script>
+        document.getElementById('submit').addEventListener('click', function() {
+                const item_name = document.getElementById('i_item').value;
+                const item_material = document.getElementById('i_material').value;
+                const item_attr1 = document.getElementById('i_attr1').value;
+                const item_attr2 = document.getElementById('i_attr2').value;
+                const length = document.getElementById('s_length').value;
+                const language = document.getElementById('s_language').value;
+                const temperatue  = document.getElementById('i_temp').value;
+                const model = document.getElementById('s_model').value;
+
+                fetch(`
+                    /generate?item_name=${item_name}&item_material=${item_material}&item_attr1=${item_attr1}&item_attr2=${item_attr2}&length=${length}&language=${language}&temperature=${temperatue}&model=${model}
+                    `                 
+                
+                ) // Send a request to the server with the input value
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('output').value = data; // Update the paragraph text with the response from the server
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+    </body>
+</html>

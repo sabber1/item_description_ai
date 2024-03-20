@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Flask Page</title>
+</head>
+<body>
+    <h1>Hello from Flask!</h1>
+    <p id="message">This is a simple Flask page.</p>
+
+    <input type="text" id="inputText" placeholder="Enter your message">
+
+    <button id="changeMessage">Change Message</button>
+
+    <script>
+        document.getElementById('changeMessage').addEventListener('click', function() {
+            const inputValue = document.getElementById('inputText').value;
+
+            fetch(`/change_message?message=${inputValue}`) // Send a request to the server when the button is clicked
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('message').textContent = data; // Update the paragraph text with the response from the server
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
