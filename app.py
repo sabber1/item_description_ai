@@ -4,11 +4,22 @@ from promts import generateEnglish, generateHungarian
 import sys
 import os
 
-api_key = open("api_key", "r", encoding="utf-8").read()
+try:
+    api_key = open("api_key", "r", encoding="utf-8").read()
+except Exception as ex:
+    print(str(ex), file=sys.stderr)
+    print("Do you have the api_key file in this folder?")
+    exit(-1)
 
-client = OpenAI(api_key = api_key)
 
-app = Flask(__name__)
+try:
+    client = OpenAI(api_key = api_key)
+
+    app = Flask(__name__)
+except Exception as ex:
+    print(str(ex), file=sys.stderr)
+    print("An error occuered during initialization.\nExciting...")
+    exit(-1)
 
 @app.route("/")
 def index():
@@ -23,7 +34,7 @@ def generate():
     length = request.args.get('length', None)
     language = request.args.get('language', None)
     temperature = request.args.get('temperature', None)
-    model = request.args.get('model', None);
+    model = request.args.get('model', None)
 
     for key in request.args:
         print(key + "\t\t\"" + request.args.get(key) + "\"", file=sys.stdout)
@@ -53,22 +64,26 @@ def generate():
 
     print("Promt: " + user_content + "\nTemperature: " +  str(temperature) + "\nMax Tokens: ", file=sys.stdout)
 
-
-    chat_completion = client.chat.completions.create(
-    model=model,
-    messages = [
-        {
-            "role" : "system",
-            "content" : "You are designed to create item descriptions for webshops"
-        },
-        {
-            "role" : "user", 
-            "content" : user_content
-        }
-    ], 
-        temperature=0,
-        max_tokens=300
-    )
+    try:
+        chat_completion = client.chat.completions.create(
+        model=model,
+        messages = [
+            {
+                "role" : "system",
+                "content" : "You are designed to create item descriptions for webshops"
+            },
+            {
+                "role" : "user", 
+                "content" : user_content
+            }
+        ], 
+            temperature=0,
+            max_tokens=300
+        )
+    except Exception as ex:
+        print(str(ex), file=sys.stderr)
+        print("An error occuered while trying to communicate with openai servers", file=sys.stderr)
+        return "Error"
 
     return chat_completion.choices[0].message.content
 
